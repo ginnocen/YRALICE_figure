@@ -733,35 +733,35 @@ void plotRAAv2Beauty()
     Double_t xJPB[8], yJPB[8], exJPB[8], eyJPB[8], exsystJPB[8];
     xJPB[0] = 1.5;
     yJPB[0] = 0.013688;
-    exJPB[0] = 0.5;
+    exJPB[0] = 0.2;
     eyJPB[0] = 0.029737;
     xJPB[1] = 2.4838;
     yJPB[1] = 0.0411919;
-    exJPB[1] = 0.5;
+    exJPB[1] = 0.2;
     eyJPB[1] = 0.029526;
     xJPB[2] = 3.4686;
     yJPB[2] = 0.0645492;
-    exJPB[2] = 0.5;
+    exJPB[2] = 0.2;
     eyJPB[2] = 0.01859;
     xJPB[3] = 4.5;
     yJPB[3] = 0.069582;
-    exJPB[3] = 0.5;
+    exJPB[3] = 0.2;
     eyJPB[3] = 0.02004;
     xJPB[4] = 5.5;
     yJPB[4] = 0.070152;
-    exJPB[4] = 0.5;
+    exJPB[4] = 0.2;
     eyJPB[4] = 0.023406;
     xJPB[5] = 6.5;
     yJPB[5] = 0.064449;
-    exJPB[5] = 0.5;
+    exJPB[5] = 0.2;
     eyJPB[5] = 0.031562;
     xJPB[6] = 7.5;
     yJPB[6] = 0.061597;
-    exJPB[6] = 0.5;
+    exJPB[6] = 0.2;
     eyJPB[6] = 0.039767;
     xJPB[7] = 8.99004;
     yJPB[7] = 0.0562162;
-    exJPB[7] = 1;
+    exJPB[7] = 0.2;
     eyJPB[7] = 0.042339;
 
     fprintf(fDBout, "B->J/Psi->e+e- (10-40%% centr., Lint=10nb-1): pt, width x, v2 (TAMU), err stat, err syst \n \n \n");
@@ -829,6 +829,46 @@ void plotRAAv2Beauty()
         grBv2syst->SetPoint(ii, ptbinCenters[ii], v2value[ii]);
         grBv2syst->SetPointError(ii, 0.1, uncv2Bplus[ii]);
     }
+    
+    // uncertainties non prompt jpsi (Fiorella)
+    
+    // correlation syst. unc. Nin / Nout yields
+    Double_t rho = 0.85;
+
+    /// sys Resolution
+    Double_t systRes[10]={0.037652,0.029658,0.028581,0.023712,0.023213,0.014858,0.016027,0.012095,0.009997};
+
+    /// sys bkg
+    Double_t systBkg[10]={0.075228,0.056557,0.044106,0.045022,0.055216,0.056007,0.046980,0.032348,0.025471};
+
+    // syst Incl. Jpsi
+    Double_t inclJpsi[10]={0.15, 0.112,0.112,0.141,0.141,0.067,0.067,0.067,0.067,0.067};
+
+    Double_t totUncYield[10];
+    Double_t systUncTot[10];
+
+    
+   Double_t a = -1.;
+   for(int ii=0; ii<8; ii++){
+ 	totUncYield[ii] = TMath::Sqrt(systRes[ii]*systRes[ii] + systBkg[ii]*systBkg[ii] + inclJpsi[ii]*inclJpsi[ii]);
+        a = yJPB[ii]*4./TMath::Pi();  
+	systUncTot[ii] = (TMath::Sqrt(2.*(1.-rho))/2.)*((1.-a*a)/a)*totUncYield[ii];
+	}
+
+   TGraphErrors *grJPBv2syst = new TGraphErrors(8);
+
+   for(int ip=0; ip<8; ip++){
+     grJPBv2syst->SetPoint(ip, xJPB[ip], yJPB[ip]);
+     grJPBv2syst->SetPointError(ip,exJPB[ip],systUncTot[ip]*yJPB[ip]);
+     }
+    grJPBv2syst->SetMarkerStyle(21);
+    grJPBv2syst->SetMarkerColor(kMagenta + 1);
+    grJPBv2syst->SetMarkerSize(1.);
+    grJPBv2syst->SetLineWidth(1);
+    grJPBv2syst->SetLineColor(kMagenta + 1);
+    grJPBv2syst->SetFillStyle(0);
+    
+
     fprintf(fDBout, "\n \n \n");
     fprintf(fDBout, "================");
     fprintf(fDBout, "\n \n \n");
@@ -856,11 +896,14 @@ void plotRAAv2Beauty()
     can2->SetTickx();
     can2->SetTicky();
 
+
     grD0FrBv2->Draw("Apz");
+    grBv2syst->Draw("2same");
+    grJPBv2syst->Draw("2same");
+    grD0FrBv2->Draw("pzsame");
     grD0FrBv2syst->Draw("2same");
     grJPBv2->Draw("pzsame");
     grBv2->Draw("pzsame");
-    grBv2syst->Draw("2same");
 
     tex0->Draw();
     tex2->Draw();
