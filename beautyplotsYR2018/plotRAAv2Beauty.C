@@ -830,9 +830,11 @@ void plotRAAv2Beauty()
         grBv2syst->SetPointError(ii, 0.1, uncv2Bplus[ii]);
     }
     
+
+    Double_t systUncTot[8]={0.036980,0.027655,0.032147,0.031989,0.019176,0.018925,0.017825,0.016130};
     // uncertainties non prompt jpsi (Fiorella)
     
-    // correlation syst. unc. Nin / Nout yields
+    /*// correlation syst. unc. Nin / Nout yields
     Double_t rho = 0.85;
 
     /// sys Resolution
@@ -846,7 +848,7 @@ void plotRAAv2Beauty()
 
     Double_t totUncYield[10];
     Double_t systUncTot[10];
-
+    
     
    Double_t a = -1.;
    for(int ii=0; ii<8; ii++){
@@ -854,12 +856,13 @@ void plotRAAv2Beauty()
         a = yJPB[ii]*4./TMath::Pi();  
 	systUncTot[ii] = (TMath::Sqrt(2.*(1.-rho))/2.)*((1.-a*a)/a)*totUncYield[ii];
 	}
-
+  */
    TGraphErrors *grJPBv2syst = new TGraphErrors(8);
 
    for(int ip=0; ip<8; ip++){
      grJPBv2syst->SetPoint(ip, xJPB[ip], yJPB[ip]);
-     grJPBv2syst->SetPointError(ip,exJPB[ip],systUncTot[ip]*yJPB[ip]);
+     // grJPBv2syst->SetPointError(ip,exJPB[ip],systUncTot[ip]*yJPB[ip]);
+     grJPBv2syst->SetPointError(ip,exJPB[ip],systUncTot[ip]);
      }
     grJPBv2syst->SetMarkerStyle(21);
     grJPBv2syst->SetMarkerColor(kMagenta + 1);
